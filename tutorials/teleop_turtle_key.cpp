@@ -143,14 +143,14 @@ void TeleopTurtle::keyLoop()
 	int calc_speed_RF = 0;
 
 	if (angular_ == 1.0) {
-		calc_speed_LF = 10;
-		calc_speed_RF = 100;
+		calc_speed_LF = 80;
+		calc_speed_RF = 255;
 	} else if (angular_ == -1.0) {
-		calc_speed_LF = 100;
-		calc_speed_RF = 10;
+		calc_speed_LF = 255;
+		calc_speed_RF = 80;
 	} else if (linear_ == 1.0) {
-		calc_speed_LF = 100;
-		calc_speed_RF = 100;
+		calc_speed_LF = 255;
+		calc_speed_RF = 255;
 	} else {
 		calc_speed_LF = 0;
 		calc_speed_RF = 0;
