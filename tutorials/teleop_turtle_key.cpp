@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include "std_msgs/UInt8.h" // Publiser voor movement_controller
 #include "std_msgs/Int8.h"	// Publiser voor movement_controller
+#include "std_msgs/Bool.h"
 
 #define KEYCODE_R 0x43 
 #define KEYCODE_L 0x44
@@ -25,7 +26,9 @@ private:
   double linear_, angular_, l_scale_, a_scale_;
   ros::Publisher twist_pub_;
   ros::Publisher chatter_linear_offset;
-  ros::Publisher chatter_angular_offset; 
+  ros::Publisher chatter_angular_offset;
+  ros::Publisher chatter_dir_L;
+  ros::Publisher chatter_dir_R; 
 };
 
 
@@ -44,6 +47,8 @@ TeleopTurtle::TeleopTurtle():
 // publisher for movement_controller
   chatter_linear_offset = nh_.advertise<std_msgs::UInt8>("key_speed_LF", 1000);
   chatter_angular_offset = nh_.advertise<std_msgs::UInt8>("key_speed_RF", 1000);
+  chatter_dir_L = nh_.advertise<std_msgs::Bool>("dir_L", 1000);
+  chatter_dir_R = nh_.advertise<std_msgs::Bool>("dir_R", 1000);
 
   ros::Rate loop_rate(10);
 // end 
@@ -96,7 +101,14 @@ void TeleopTurtle::keyLoop()
 
   int linear_offset = 0;  // variable om int te maken
   int angular_offset = 0; // variable om int te maken
-
+  int calc_speed_LF = 0;
+  int calc_speed_RF = 0;
+  int set_speed_LF = 0;
+  int set_speed_RF = 0;
+  int send_speed_LF = 0;
+  int send_speed_RF = 0;
+  bool dir_L = false;
+  bool dir_R = false;
   for(;;)
   {
     // get the next event from the keyboard  
@@ -108,7 +120,10 @@ void TeleopTurtle::keyLoop()
 
     linear_=angular_=0;
     ROS_DEBUG("value: 0x%02X\n", c);
-  
+    
+	//angular_ = 0.0;
+	//linear_ = 0.0;
+
     switch(c)
     {
       case KEYCODE_L:
@@ -131,6 +146,12 @@ void TeleopTurtle::keyLoop()
         linear_ = -1.0;
         dirty = true;
         break;
+	  //default:
+		//ROS_DEBUG("STOP");
+		//angular_ = 0.0;
+		//linear_ = 0.0;
+		//break;
+			
     }
 	int linear_offset = static_cast<int>(linear_); 			// van double naar int
   	int angular_offset = static_cast<int>(angular_);	 	// van double naar int
@@ -139,23 +160,58 @@ void TeleopTurtle::keyLoop()
 
 
 /////////////////////////////// CALCULATIONS //////////////////////////////////////////
-	int calc_speed_LF = 0;
-	int calc_speed_RF = 0;
+
 
 	if (angular_ == 1.0) {
-		calc_speed_LF = 10;
-		calc_speed_RF = 100;
+		set_speed_LF = 50;
+		set_speed_RF = 250;
 	} else if (angular_ == -1.0) {
-		calc_speed_LF = 100;
-		calc_speed_RF = 10;
+		set_speed_LF = 250;
+		set_speed_RF = 50;
 	} else if (linear_ == 1.0) {
-		calc_speed_LF = 100;
-		calc_speed_RF = 100;
-	} else {
-		calc_speed_LF = 0;
-		calc_speed_RF = 0;
+		set_speed_LF = 250;
+		set_speed_RF = 250;
+	} else if (linear_ == -1.0) {
+		set_speed_LF = -250;
+		set_speed_RF = -250;
 	}
 
+	if (calc_speed_LF > set_speed_LF){
+		calc_speed_LF--;
+	}
+
+	if (calc_speed_LF < set_speed_LF){
+		calc_speed_LF++;
+	}
+
+	if (calc_speed_RF > set_speed_RF){
+		calc_speed_RF--;
+	}
+
+	if (calc_speed_RF < set_speed_RF){
+		calc_speed_RF++;
+	}
+
+	if (calc_speed_LF >= 50){
+		send_speed_LF = calc_speed_LF;
+		dir_L = true;
+	} else if (calc_speed_LF <= -50){
+		send_speed_LF = abs(calc_speed_LF);
+		dir_L = false;
+	} else {
+		send_speed_LF = 0;
+	}
+	
+	if (calc_speed_RF >= 50){
+		send_speed_RF = calc_speed_RF;
+		dir_R = true;
+	} else if (calc_speed_LF <= -50){
+		send_speed_RF = abs(calc_speed_RF);
+		dir_R = false;
+	} else {
+		send_speed_RF = 0;
+	}
+	
 
 /////////////////////////////// END CALCULATIONS //////////////////////////////////////////
 	
@@ -163,19 +219,25 @@ void TeleopTurtle::keyLoop()
     geometry_msgs::Twist twist;
     twist.angular.z = a_scale_*angular_;
     twist.linear.x = l_scale_*linear_;
-    
     if(dirty ==true)
     {
       twist_pub_.publish(twist);
 
 	  std_msgs::UInt8 msg_speed_LF;
 	  std_msgs::UInt8 msg_speed_RF;
+	  std_msgs::Bool msg_dir_L;
+	  std_msgs::Bool msg_dir_R;
 
-	  msg_speed_LF.data = calc_speed_LF;
-	  msg_speed_RF.data = calc_speed_RF;
+	  msg_speed_LF.data = send_speed_LF;
+	  msg_speed_RF.data = send_speed_RF;
+	  msg_dir_L.data = dir_L;
+	  msg_dir_R.data = dir_R;
 
 	  chatter_linear_offset.publish(msg_speed_LF);
 	  chatter_angular_offset.publish(msg_speed_RF);
+	  chatter_dir_L.publish(msg_dir_L);
+	  chatter_dir_R.publish(msg_dir_R);
+
       dirty=false;
     }
   }
