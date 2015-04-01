@@ -163,7 +163,6 @@ void TeleopTurtle::keyLoop()
 
 
 	if (angular_ == 1.0) {
-<<<<<<< HEAD
 		set_speed_LF = 50;
 		set_speed_RF = 250;
 	} else if (angular_ == -1.0) {
@@ -187,19 +186,6 @@ void TeleopTurtle::keyLoop()
 
 	if (calc_speed_RF > set_speed_RF){
 		calc_speed_RF--;
-=======
-		calc_speed_LF = 80;
-		calc_speed_RF = 255;
-	} else if (angular_ == -1.0) {
-		calc_speed_LF = 255;
-		calc_speed_RF = 80;
-	} else if (linear_ == 1.0) {
-		calc_speed_LF = 255;
-		calc_speed_RF = 255;
-	} else {
-		calc_speed_LF = 0;
-		calc_speed_RF = 0;
->>>>>>> fbce0faa8863b7e90d422e5afa914dc44e1ab5cc
 	}
 
 	if (calc_speed_RF < set_speed_RF){
