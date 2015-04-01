@@ -50,7 +50,7 @@ TeleopTurtle::TeleopTurtle():
   chatter_dir_L = nh_.advertise<std_msgs::Bool>("dir_L", 1000);
   chatter_dir_R = nh_.advertise<std_msgs::Bool>("dir_R", 1000);
 
-  ros::Rate loop_rate(10);
+  ros::Rate loop_rate(100);
 // end 
 }
 
