@@ -11,7 +11,8 @@
 #define KEYCODE_L 0x44
 #define KEYCODE_U 0x41
 #define KEYCODE_D 0x42
-#define KEYCODE_Q 0x71
+//#define KEYCODE_Q 0x71
+#define KEYCODE_S 0x20
 
 class TeleopTurtle
 {
@@ -146,6 +147,11 @@ void TeleopTurtle::keyLoop()
         linear_ = -1.0;
         dirty = true;
         break;
+      case KEYCODE_S:
+        ROS_DEBUG("STOP");
+        linear_ = 5;
+        dirty = true;
+        break;
 	  //default:
 		//ROS_DEBUG("STOP");
 		//angular_ = 0.0;
@@ -174,7 +180,14 @@ void TeleopTurtle::keyLoop()
 	} else if (linear_ == -1.0) {
 		set_speed_LF = -250;
 		set_speed_RF = -250;
-	}
+    } else if (linear_ == 5.0) {
+        set_speed_LF = 0;
+        set_speed_RF = 0;
+        calc_speed_LF = 0;
+        calc_speed_RF = 0;
+        dir_L = true;
+        dir_R = true;
+    }
 
 	if (calc_speed_LF > set_speed_LF){
 		calc_speed_LF--;
