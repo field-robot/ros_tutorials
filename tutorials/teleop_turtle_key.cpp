@@ -223,20 +223,20 @@ void TeleopTurtle::keyLoop()
         }
     }
 
-	if (calc_speed_LF >= 50){
+    if (calc_speed_LF >= 25){
 		send_speed_LF = calc_speed_LF;
 		dir_L = true;
-	} else if (calc_speed_LF <= -50){
+    } else if (calc_speed_LF <= -25){
 		send_speed_LF = abs(calc_speed_LF);
 		dir_L = false;
 	} else {
 		send_speed_LF = 0;
 	}
 	
-	if (calc_speed_RF >= 50){
+    if (calc_speed_RF >= 25){
 		send_speed_RF = calc_speed_RF;
 		dir_R = true;
-	} else if (calc_speed_LF <= -50){
+    } else if (calc_speed_LF <= -25){
 		send_speed_RF = abs(calc_speed_RF);
 		dir_R = false;
 	} else {
