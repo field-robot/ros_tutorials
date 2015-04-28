@@ -178,32 +178,50 @@ void TeleopTurtle::keyLoop()
 		set_speed_LF = 250;
 		set_speed_RF = 250;
 	} else if (linear_ == -1.0) {
-		set_speed_LF = -250;
+        set_speed_LF = -250;
 		set_speed_RF = -250;
     } else if (linear_ == 5.0) {
         set_speed_LF = 0;
         set_speed_RF = 0;
-     //   calc_speed_LF = 0;
-      //  calc_speed_RF = 0;
-      //  dir_L = true;
-      //  dir_R = true;
+       // calc_speed_LF = 0;
+       // calc_speed_RF = 0;
+       // dir_L = true;
+       // dir_R = true;
     }
 
-	if (calc_speed_LF > set_speed_LF){
-		calc_speed_LF--;
-	}
+    if (set_speed_LF != 0){
+        if (calc_speed_LF > set_speed_LF){
+            calc_speed_LF--;
+        }
 
-	if (calc_speed_LF < set_speed_LF){
-		calc_speed_LF++;
-	}
+        if (calc_speed_LF < set_speed_LF){
+            calc_speed_LF++;
+        }
 
-	if (calc_speed_RF > set_speed_RF){
-		calc_speed_RF--;
-	}
+        if (calc_speed_RF > set_speed_RF){
+            calc_speed_RF--;
+        }
 
-	if (calc_speed_RF < set_speed_RF){
-		calc_speed_RF++;
-	}
+        if (calc_speed_RF < set_speed_RF){
+            calc_speed_RF++;
+        }
+    } else {
+        if (calc_speed_LF > set_speed_LF){
+            calc_speed_LF = calc_speed_LF-15;
+        }
+
+        if (calc_speed_LF < set_speed_LF){
+            calc_speed_LF = calc_speed_LF+15;
+        }
+
+        if (calc_speed_RF > set_speed_RF){
+            calc_speed_RF = calc_speed_RF-15;
+        }
+
+        if (calc_speed_RF < set_speed_RF){
+            calc_speed_RF = calc_speed_RF+15;
+        }
+    }
 
 	if (calc_speed_LF >= 50){
 		send_speed_LF = calc_speed_LF;
