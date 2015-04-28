@@ -183,10 +183,10 @@ void TeleopTurtle::keyLoop()
     } else if (linear_ == 5.0) {
         set_speed_LF = 0;
         set_speed_RF = 0;
-        calc_speed_LF = 0;
-        calc_speed_RF = 0;
-        dir_L = true;
-        dir_R = true;
+     //   calc_speed_LF = 0;
+      //  calc_speed_RF = 0;
+      //  dir_L = true;
+      //  dir_R = true;
     }
 
 	if (calc_speed_LF > set_speed_LF){
